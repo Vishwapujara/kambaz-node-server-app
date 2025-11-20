@@ -4,10 +4,18 @@ export default function UsersDao(db) {
   let { users } = db;
 
   const createUser = (user) => {
-    const newUser = { ...user, _id: uuidv4() };
-    db.users.push(newUser); // Make sure to update db.users
+    // FIX 2: Add default fields for consistency
+    const newUser = { 
+        ...user, 
+        _id: uuidv4(),
+        firstName: user.firstName || "New",     // Add default name
+        lastName: user.lastName || "User",      // Add default name
+        role: user.role || "STUDENT"            // Add default role
+        // You can add other missing defaults here (like loginId, section, etc.)
+    };
+    db.users.push(newUser); 
     return newUser;
-  };
+};
 
   const findAllUsers = () => db.users;
 

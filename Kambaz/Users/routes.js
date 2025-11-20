@@ -1,6 +1,5 @@
 import UsersDao from "./dao.js";
 import EnrollmentsDao from "../Enrollments/dao.js";
-let currentUser = null;
 export default function UserRoutes(app, db) {
     const dao = UsersDao(db);
     const enrollmentsDao = EnrollmentsDao(db);
@@ -30,17 +29,33 @@ export default function UserRoutes(app, db) {
         req.session["currentUser"] = currentUser;
         res.json(currentUser);
     };
-    const signup = (req, res) => {
-        const user = dao.findUserByUsername(req.body.username);
-        if (user) {
-            res.status(400).json(
-                { message: "Username already in use" });
-            return;
-        }
-        currentUser = dao.createUser(req.body);
-        res.json(currentUser);
+    // const signup = (req, res) => {
+    //     const user = dao.findUserByUsername(req.body.username);
+    //     if (user) {
+    //         res.status(400).json(
+    //             { message: "Username already in use" });
+    //         return;
+    //     }
+    //     currentUser = dao.createUser(req.body);
+    //     res.json(currentUser);
 
-    };
+    // };
+    const signup = (req, res) => {
+    const user = dao.findUserByUsername(req.body.username);
+    if (user) {
+        res.status(400).json(
+            { message: "Username already in use" });
+        return;
+    }
+    
+    // FIX: Use a local variable and set the session
+    const newUser = dao.createUser(req.body);
+    
+    // CRITICAL FIX 1: Set the session after successful creation
+    req.session["currentUser"] = newUser; 
+
+    res.json(newUser);
+};
     const signin = (req, res) => {
         const { username, password } = req.body;
         const currentUser = dao.findUserByCredentials(username, password);
