@@ -154,10 +154,10 @@
 
 import "dotenv/config.js"; 
 import express from 'express';
+import cookieSession from 'cookie-session';
+import cors from "cors";
 import Hello from './Hello.js';
 import Lab5 from './Lab5/index.js';
-import cors from "cors";   
-import session from "express-session"; 
 import db from './Kambaz/Database/index.js';
 import UserRoutes from './Kambaz/Users/routes.js';
 import CourseRoutes from './Kambaz/Courses/routes.js';
@@ -166,56 +166,21 @@ import AssignmentsRoutes from "./Kambaz/Assignments/routes.js";
 
 const app = express();
 
-// Configuration constants
-const ALLOWED_ORIGINS = [
-  process.env.CLIENT_URL, 
-  'http://localhost:3000', 
-  'https://kambaz-next-js-466h.vercel.app' 
-];
-
-const vercelPreviewRegex = /-vishwa-pujaras-projects\.vercel\.app$/;
-
-// 1. CORS Configuration
+// 1. CORS - MUST BE FIRST
 app.use(cors({
   credentials: true,
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true); 
-
-    if (ALLOWED_ORIGINS.includes(origin)) {
-      return callback(null, true);
-    }
-
-    if (origin.match(vercelPreviewRegex)) {
-      return callback(null, true);
-    }
-
-    console.log('CORS Blocked Origin:', origin);
-    return callback(new Error('Not allowed by CORS'));
-  }
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
 }));
 
-// 2. SESSION Configuration - CRITICAL FIX
-const sessionOptions = {
-  secret: process.env.SESSION_SECRET || "kambaz-secret-key",
-  resave: false,
-  saveUninitialized: false,
-};
-
-// FIX: Check NODE_ENV (not SERVER_ENV) and configure cookies properly
-if (process.env.SERVER_ENV === "production") {
-  sessionOptions.proxy = true;
-  sessionOptions.cookie = {
-    sameSite: "none",
-    secure: true,
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
-  };
-  console.log('Production session config applied');
-} else {
-  console.log('Development session config applied');
-}
-
-app.use(session(sessionOptions));
+// 2. COOKIE SESSION (works without database!)
+app.use(cookieSession({
+  name: 'session',
+  keys: [process.env.SESSION_SECRET || 'kambaz-secret-key'],
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  secure: process.env.SERVER_ENV === "production",
+  sameSite: process.env.SERVER_ENV === "production" ? "none" : "lax",
+  httpOnly: true,
+}));
 
 // 3. Body Parser
 app.use(express.json());
@@ -231,5 +196,5 @@ Lab5(app);
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+  console.log('SERVER_ENV:', process.env.SERVER_ENV || 'development');
 });
