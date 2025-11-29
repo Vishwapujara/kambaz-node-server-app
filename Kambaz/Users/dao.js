@@ -8,16 +8,14 @@ export default function UsersDao(db) {
   // Refactored to use Mongoose: model.create()
   // We keep your previous logic to ensure basic defaults (firstName, lastName) are set
   const createUser = (user) => {
-    // 1. Prepare user object with required fields and defaults
     const newUser = {
-      // FIX: Generate a unique string ID, since schema requires _id: String
-      _id: uuidv4(), 
+      _id: uuidv4(), // FIX: Generates unique string ID for Mongoose to accept
       ...user,
       firstName: user.firstName || "New",
       lastName: user.lastName || "User",
     };
-    // Ensure the client-provided _id (if any) is overwritten or explicitly set, not deleted.
     
+    // model.create is a promise, so we return it
     return model.create(newUser);
   };
 

@@ -61,33 +61,41 @@ export default function UserRoutes(app) {
     };
     
     // Authentication Functions
-   const signup = async (req, res) => { // ASYNC
-        const user = await dao.findUserByUsername(req.body.username); // AWAIT
+   const signup = async (req, res) => {
+        const user = await dao.findUserByUsername(req.body.username);
         if (user) {
             res.status(400).json({ message: "Username already in use" });
             return;
         }
         
         try {
-            const newUser = await dao.createUser(req.body); // AWAIT
+            // This is the line that was crashing before, now it's protected
+            const newUser = await dao.createUser(req.body); 
             req.session["currentUser"] = newUser;
             res.json(newUser);
-        } catch (error) { // FIX: Removed the ': any' type annotation
+        } catch (error) { 
             console.error("Signup failed:", error);
-            // Send a generic, controlled 500 error instead of crashing
+            // Sending a 500 error, which now includes unhandled validation errors 
+            // that occurred during the model.create call (like missing fields).
             res.status(500).json({ message: "An error occurred during signup." });
         }
     };
     
     const signin = async (req, res) => { // ASYNC
-        const { username, password } = req.body;
-        const currentUser = await dao.findUserByCredentials(username, password); // AWAIT
-        
-        if (currentUser) {
-            req.session["currentUser"] = currentUser;
-            res.json(currentUser);
-        } else {
-            res.status(401).json({ message: "Unable to login. Try again later." });
+        try {
+            const { username, password } = req.body;
+            const currentUser = await dao.findUserByCredentials(username, password); 
+            
+            if (currentUser) {
+                req.session["currentUser"] = currentUser;
+                res.json(currentUser);
+            } else {
+                // Returns 401 if credentials don't match
+                res.status(401).json({ message: "Invalid username or password. Try again later." });
+            }
+        } catch (error) {
+            console.error("Signin failed:", error);
+            res.status(500).json({ message: "An unexpected error occurred during signin." });
         }
     };
     
