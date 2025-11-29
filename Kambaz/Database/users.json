@@ -1,4 +1,4 @@
-export default [
+[
   { "_id": "123", "firstName": "Tony",    "lastName": "Stark",     "loginId": "001234561S", "username": "tony123", "password": "pass123", "section": "S101", "role": "STUDENT",    "lastActivity": "2020-10-01", "totalActivity": "10:21:32" },
   { "_id": "234", "firstName": "Bruce",   "lastName": "Wayne",     "loginId": "001234562S", "username": "bruce234", "password": "pass234", "section": "S101", "role": "STUDENT",    "lastActivity": "2020-11-02", "totalActivity": "15:32:43" },
   { "_id": "345", "firstName": "Steve",   "lastName": "Rogers",    "loginId": "001234563S", "username": "steve345", "password": "pass345", "section": "S101", "role": "STUDENT",    "lastActivity": "2020-10-02", "totalActivity": "23:32:43" },

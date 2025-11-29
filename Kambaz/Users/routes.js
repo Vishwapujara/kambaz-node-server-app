@@ -1,89 +1,96 @@
 import UsersDao from "./dao.js";
 import EnrollmentsDao from "../Enrollments/dao.js";
 
-export default function UserRoutes(app, db) {
-    const dao = UsersDao(db);
-    const enrollmentsDao = EnrollmentsDao(db);
+export default function UserRoutes(app) {
+    // The DAO is initialized, but it uses the Mongoose model internally, 
+    // ignoring the deprecated 'db' object passed in.
+    const dao = UsersDao(); 
+    const enrollmentsDao = EnrollmentsDao();
     
-    const createUser = (req, res) => {
-        const newUser = dao.createUser(req.body);
+    // CRUD Functions
+    const createUser = async (req, res) => {
+        const newUser = await dao.createUser(req.body); // AWAIT
         res.json(newUser);
     };
     
-    const deleteUser = (req, res) => {
+    const deleteUser = async (req, res) => {
         const { userId } = req.params;
-        const status = dao.deleteUser(userId);
+        const status = await dao.deleteUser(userId); // AWAIT
         res.json(status);
     };
     
-    const findAllUsers = (req, res) => {
-        const users = dao.findAllUsers();
+    const findAllUsers = async (req, res) => {
+        // Extract query parameters
+        const { role, name } = req.query;
+        let users;
+
+        if (role) {
+            // Filter by exact role match
+            users = await dao.findUsersByRole(role);
+        } else if (name) {
+            // Filter by partial name match
+            users = await dao.findUsersByPartialName(name);
+        } else {
+            // Default: Retrieve all users
+            users = await dao.findAllUsers();
+        }
+
         res.json(users);
     };
     
-    const findUserById = (req, res) => {
+    const findUserById = async (req, res) => {
         const { userId } = req.params;
-        const user = dao.findUserById(userId);
+        const user = await dao.findUserById(userId); // AWAIT
         res.json(user);
     };
     
-    const updateUser = (req, res) => {
+    const updateUser = async (req, res) => { // ASYNC
         const userId = req.params.userId;
         const userUpdates = req.body;
-        dao.updateUser(userId, userUpdates);
-        const currentUser = dao.findUserById(userId);
+        
+        await dao.updateUser(userId, userUpdates); // AWAIT
+
+        const currentUser = await dao.findUserById(userId); // AWAIT
+        
+        if (!currentUser) {
+            return res.status(404).json({ message: "User not found after update." });
+        }
+
         req.session["currentUser"] = currentUser;
         res.json(currentUser);
     };
     
-    const signup = (req, res) => {
-        const user = dao.findUserByUsername(req.body.username);
+    // Authentication Functions
+    const signup = async (req, res) => { // ASYNC
+        const user = await dao.findUserByUsername(req.body.username); // AWAIT
         if (user) {
             res.status(400).json({ message: "Username already in use" });
             return;
         }
         
-        const newUser = dao.createUser(req.body);
+        const newUser = await dao.createUser(req.body); // AWAIT
         req.session["currentUser"] = newUser;
-        
-        // CRITICAL FIX: Explicitly save session to ensure cookie is set
-        req.session.save((err) => {
-            if (err) {
-                console.error('Session save error in signup:', err);
-                return res.status(500).json({ message: "Session error" });
-            }
-            console.log('Signup session saved. Session ID:', req.sessionID);
-            res.json(newUser);
-        });
+        res.json(newUser);
     };
     
-    const signin = (req, res) => {
+    const signin = async (req, res) => { // ASYNC
         const { username, password } = req.body;
-        const currentUser = dao.findUserByCredentials(username, password);
+        const currentUser = await dao.findUserByCredentials(username, password); // AWAIT
         
         if (currentUser) {
             req.session["currentUser"] = currentUser;
-            
-            // CRITICAL FIX: Explicitly save session to ensure cookie is set
-            req.session.save((err) => {
-                if (err) {
-                    console.error('Session save error in signin:', err);
-                    return res.status(500).json({ message: "Session error" });
-                }
-                console.log('Signin session saved. Session ID:', req.sessionID);
-                res.json(currentUser);
-            });
+            res.json(currentUser);
         } else {
             res.status(401).json({ message: "Unable to login. Try again later." });
         }
     };
     
-    const signout = (req, res) => {
+    const signout = async (req, res) => { // ASYNC (for consistency)
         req.session.destroy();
         res.sendStatus(200);
     };
     
-    const profile = (req, res) => {
+    const profile = async (req, res) => { // ASYNC (for consistency)
         const currentUser = req.session["currentUser"];
         if (!currentUser) {
             res.sendStatus(401);
@@ -92,7 +99,8 @@ export default function UserRoutes(app, db) {
         res.json(currentUser);
     };
     
-    const enrollUserInCourse = (req, res) => {
+    // Enrollment Functions (Assuming EnrollmentsDao is also Mongoose-based/async)
+    const enrollUserInCourse = async (req, res) => { // ASYNC
         const { uid, cid } = req.params;
         const currentUser = req.session["currentUser"];
         
@@ -101,11 +109,11 @@ export default function UserRoutes(app, db) {
             return;
         }
         
-        const newEnrollment = enrollmentsDao.enrollUserInCourse(uid, cid);
+        const newEnrollment = await enrollmentsDao.enrollUserInCourse(uid, cid); // AWAIT
         res.json(newEnrollment);
     };
 
-    const unenrollUserFromCourse = (req, res) => {
+    const unenrollUserFromCourse = async (req, res) => { // ASYNC
         const { uid, cid } = req.params;
         const currentUser = req.session["currentUser"];
         
@@ -114,10 +122,11 @@ export default function UserRoutes(app, db) {
             return;
         }
         
-        const status = enrollmentsDao.unenrollUserFromCourse(uid, cid);
+        const status = await enrollmentsDao.unenrollUserFromCourse(uid, cid); // AWAIT
         res.json({ status });
     };
     
+    // Route mappings
     app.post("/api/users", createUser);
     app.get("/api/users", findAllUsers);
     app.get("/api/users/:userId", findUserById);

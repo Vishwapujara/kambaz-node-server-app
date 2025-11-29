@@ -1,4 +1,4 @@
-export default [
+[
   { "id": "m-CS5001-1", "course": "CS5001", "name": "Getting Started with React", "lessons": [{ "id":"l1","name":"JSX and Components" }, { "id":"l2","name":"Props and State" }] },
   { "id": "m-CS5001-2", "course": "CS5001", "name": "Component Lifecycle", "lessons": [{ "id":"l3","name":"useEffect Hook" }, { "id":"l4","name":"Context API" }] },
   { "id": "m-CS5001-3", "course": "CS5001", "name": "Routing & Data", "lessons": [{ "id":"l5","name":"Next.js Routing" }, { "id":"l6","name":"Fetching Data" }] },

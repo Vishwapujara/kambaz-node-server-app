@@ -1,4 +1,4 @@
-export default [
+[
   {
     "_id": "CS5001",
     "name": "Intro to React",

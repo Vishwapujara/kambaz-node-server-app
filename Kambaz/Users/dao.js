@@ -1,68 +1,76 @@
-import { v4 as uuidv4 } from "uuid";
+import model from "./model.js"; // Import the Mongoose model
 
-export default function UsersDao(db) {
-  let { users } = db;
-
-  const createUser = (user) => {
-    // FIX 2: Add default fields for consistency
-    const newUser = { 
-        ...user, 
-        _id: uuidv4(),
-        firstName: user.firstName || "New",     // Add default name
-        lastName: user.lastName || "User",      // Add default name
-        role: user.role || "STUDENT"            // Add default role
-        // You can add other missing defaults here (like loginId, section, etc.)
-    };
-    db.users.push(newUser); 
-    return newUser;
-};
-
-  const findAllUsers = () => db.users;
-
-  const findUserById = (userId) =>
-    db.users.find((user) => user._id === userId);
-
-  // --- ADD THIS FUNCTION ---
-  const findUserByUsername = (username) =>
-    db.users.find((user) => user.username === username);
-  // -------------------------
-
-  // const findUserByCredentials = (username, password) =>
-  //   db.users.find(
-  //     (user) => user.username === username && user.password === password
-  //   );
-
-  const findUserByCredentials = (username, password) => {
-  // CRITICAL FIX: Trim whitespace from input to ensure exact match
-  const trimmedUsername = username ? username.trim() : username;
-  const trimmedPassword = password ? password.trim() : password;
+// Note: We keep the 'db' parameter in the function signature for compatibility 
+// with the main application entry point (index.js), but we no longer use it.
+export default function UsersDao(db) { 
   
-  return db.users.find(
-    // Ensure the lookup logic uses the trimmed strings
-    (user) => user.username === trimmedUsername && user.password === trimmedPassword
-  );
-};
-
-  const updateUser = (userId, userUpdates) => {
-    db.users = db.users.map((u) =>
-      u._id === userId ? { ...u, ...userUpdates } : u
-    );
-    return 1;
+  // Refactored to use Mongoose: model.create()
+  // We keep your previous logic to ensure basic defaults (firstName, lastName) are set
+  const createUser = (user) => {
+    // 1. Prepare user object with defaults (Mongoose schema handles 'role' default)
+    const newUser = {
+      ...user,
+      firstName: user.firstName || "New",
+      lastName: user.lastName || "User",
+    };
+    // 2. We deliberately remove the old in-memory generated _id to let MongoDB generate a standard ObjectId
+    delete newUser._id; 
+    
+    // 3. Use Mongoose to create the record in the database
+    return model.create(newUser);
   };
 
-  const deleteUser = (userId) => {
-    const initialLength = db.users.length;
-    db.users = db.users.filter((u) => u._id !== userId);
-    return db.users.length < initialLength ? 1 : 0;
+  // Refactored to use Mongoose: model.find()
+  const findAllUsers = () => model.find();
+
+  // Refactored to use Mongoose: model.findById()
+  const findUserById = (userId) => model.findById(userId);
+
+  // Refactored to use Mongoose: model.findOne({ criteria })
+  const findUserByUsername = (username) => model.findOne({ username });
+
+  // Refactored to use Mongoose: model.findOne({ criteria })
+  const findUserByCredentials = (username, password) => {
+    // IMPORTANT: Retaining your critical client-side logic for trimming credentials 
+    const trimmedUsername = username ? username.trim() : username;
+    const trimmedPassword = password ? password.trim() : password;
+
+    return model.findOne({ username: trimmedUsername, password: trimmedPassword });
   };
 
-  return {
-    createUser,
-    findAllUsers,
-    findUserById,
-    findUserByUsername, // This will now work
-    findUserByCredentials,
-    updateUser,
+  // Refactored to use Mongoose: model.updateOne({ filter }, { update })
+  const updateUser = (userId, userUpdates) =>
+    model.updateOne({ _id: userId }, { $set: userUpdates });
+
+  // Refactored to use Mongoose: model.deleteOne({ filter })
+  const deleteUser = (userId) => model.deleteOne({ _id: userId });
+
+  // Retrieves users filtered by exact role match
+  const findUsersByRole = (role) => model.find({ role }); 
+
+  // Retrieves users filtered by partial name (first or last)
+  const findUsersByPartialName = (partialName) => {
+    // Create a case-insensitive regular expression
+    const regex = new RegExp(partialName, "i"); 
+    return model.find({
+      $or: [
+        { firstName: { $regex: regex } }, // Match first name partially
+        { lastName: { $regex: regex } },  // Match last name partially
+      ],
+    });
+  };
+
+
+
+  return { 
+    createUser, 
+    findAllUsers, 
+    findUserById, 
+    findUserByUsername, 
+    findUserByCredentials, 
+    updateUser, 
     deleteUser,
+    findUsersByRole,
+    findUsersByPartialName,
   };
 }

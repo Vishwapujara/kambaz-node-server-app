@@ -1,8 +1,8 @@
-import courses from "./courses.js";
-import modules from "./modules.js";
-import assignments from "./assignments.js";
-import users from "./users.js";
-import enrollments from "./enrollments.js";
+import courses from "./courses.json";
+import modules from "./modules.json";
+import assignments from "./assignments.json";
+import users from "./users.json";
+import enrollments from "./enrollments.json";
 
 const db = { 
   courses: [...courses], 

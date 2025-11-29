@@ -1,6 +1,6 @@
-export default [
+[
   {
-    "_id": "A-CS5001-1",  // Changed from "id"
+    "_id": "A-CS5001-1",  
     "course": "CS5001",
     "title": "React Basics",
     "due": "2025-09-15",
