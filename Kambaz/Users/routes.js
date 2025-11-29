@@ -61,16 +61,22 @@ export default function UserRoutes(app) {
     };
     
     // Authentication Functions
-    const signup = async (req, res) => { // ASYNC
+   const signup = async (req, res) => { // ASYNC
         const user = await dao.findUserByUsername(req.body.username); // AWAIT
         if (user) {
             res.status(400).json({ message: "Username already in use" });
             return;
         }
         
-        const newUser = await dao.createUser(req.body); // AWAIT
-        req.session["currentUser"] = newUser;
-        res.json(newUser);
+        try {
+            const newUser = await dao.createUser(req.body); // AWAIT (Now includes generated _id)
+            req.session["currentUser"] = newUser;
+            res.json(newUser);
+        } catch (error: any) {
+            console.error("Signup failed:", error);
+            // In case of any database error (like validation failure), send a controlled 500 error
+            res.status(500).json({ message: "An unexpected error occurred during signup." });
+        }
     };
     
     const signin = async (req, res) => { // ASYNC

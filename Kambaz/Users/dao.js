@@ -1,4 +1,5 @@
 import model from "./model.js"; // Import the Mongoose model
+import { v4 as uuidv4 } from "uuid"; // <-- ADD THIS IMPORT
 
 // Note: We keep the 'db' parameter in the function signature for compatibility 
 // with the main application entry point (index.js), but we no longer use it.
@@ -7,16 +8,16 @@ export default function UsersDao(db) {
   // Refactored to use Mongoose: model.create()
   // We keep your previous logic to ensure basic defaults (firstName, lastName) are set
   const createUser = (user) => {
-    // 1. Prepare user object with defaults (Mongoose schema handles 'role' default)
+    // 1. Prepare user object with required fields and defaults
     const newUser = {
+      // FIX: Generate a unique string ID, since schema requires _id: String
+      _id: uuidv4(), 
       ...user,
       firstName: user.firstName || "New",
       lastName: user.lastName || "User",
     };
-    // 2. We deliberately remove the old in-memory generated _id to let MongoDB generate a standard ObjectId
-    delete newUser._id; 
+    // Ensure the client-provided _id (if any) is overwritten or explicitly set, not deleted.
     
-    // 3. Use Mongoose to create the record in the database
     return model.create(newUser);
   };
 
