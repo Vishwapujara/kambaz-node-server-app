@@ -69,13 +69,13 @@ export default function UserRoutes(app) {
         }
         
         try {
-            const newUser = await dao.createUser(req.body); // AWAIT (Now includes generated _id)
+            const newUser = await dao.createUser(req.body); // AWAIT
             req.session["currentUser"] = newUser;
             res.json(newUser);
-        } catch (error: any) {
+        } catch (error) { // FIX: Removed the ': any' type annotation
             console.error("Signup failed:", error);
-            // In case of any database error (like validation failure), send a controlled 500 error
-            res.status(500).json({ message: "An unexpected error occurred during signup." });
+            // Send a generic, controlled 500 error instead of crashing
+            res.status(500).json({ message: "An error occurred during signup." });
         }
     };
     
