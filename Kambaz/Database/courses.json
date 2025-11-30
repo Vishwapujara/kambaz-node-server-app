@@ -3,36 +3,66 @@
     "_id": "CS5001",
     "name": "Intro to React",
     "description": "Basics of React, components, and JSX.",
-    "image": "https://placehold.co/600x160/007bff/ffffff.png?text=Intro+to+React"
+    "image": "https://placehold.co/600x160/007bff/ffffff.png?text=Intro+to+React",
+    "modules": [
+      { "_id": "m-CS5001-1", "name": "Getting Started with React", "course": "CS5001", "lessons": [{ "_id":"l1","name":"JSX and Components" }, { "_id":"l2","name":"Props and State" }] },
+      { "_id": "m-CS5001-2", "name": "Component Lifecycle", "course": "CS5001", "lessons": [{ "_id":"l3","name":"useEffect Hook" }, { "_id":"l4","name":"Context API" }] },
+      { "_id": "m-CS5001-3", "name": "Routing & Data", "course": "CS5001", "lessons": [{ "_id":"l5","name":"Next.js Routing" }, { "_id":"l6","name":"Fetching Data" }] }
+    ]
   },
   {
     "_id": "CS5010",
     "name": "Advanced JavaScript",
     "description": "Deep dive into modern JavaScript features.",
-    "image": "https://placehold.co/600x160/ff9800/ffffff.png?text=Advanced+JavaScript"
+    "image": "https://placehold.co/600x160/ff9800/ffffff.png?text=Advanced+JavaScript",
+    "modules": [
+      { "_id": "m-CS5010-1", "name": "Modern JavaScript", "course": "CS5010", "lessons": [{ "_id":"l7","name":"ES6 Syntax" }, { "_id":"l8","name":"Modules & Bundling" }] },
+      { "_id": "m-CS5010-2", "name": "Asynchronous JS", "course": "CS5010", "lessons": [{ "_id":"l9","name":"Promises" }, { "_id":"l10","name":"Async/Await" }] },
+      { "_id": "m-CS5010-3", "name": "Performance & Patterns", "course": "CS5010", "lessons": [{ "_id":"l11","name":"Memory & Performance" }, { "_id":"l12","name":"Design Patterns" }] }
+    ]
   },
   {
     "_id": "CS5020",
     "name": "Web Development",
     "description": "Full-stack web development fundamentals.",
-    "image": "https://placehold.co/600x160/4caf50/ffffff.png?text=Web+Development"
+    "image": "https://placehold.co/600x160/4caf50/ffffff.png?text=Web+Development",
+    "modules": [
+      { "_id": "m-CS5020-1", "name": "HTML & CSS Recap", "course": "CS5020", "lessons": [{ "_id":"l13","name":"Semantic HTML" }, { "_id":"l14","name":"Flexbox & Grid" }] },
+      { "_id": "m-CS5020-2", "name": "Frontend Tooling", "course": "CS5020", "lessons": [{ "_id":"l15","name":"Build Tools" }, { "_id":"l16","name":"Testing" }] },
+      { "_id": "m-CS5020-3", "name": "Full-stack Basics", "course": "CS5020", "lessons": [{ "_id":"l17","name":"APIs" }, { "_id":"l18","name":"Databases" }] }
+    ]
   },
   {
     "_id": "CS5030",
     "name": "Data Structures",
     "description": "Fundamentals of data structures and algorithms.",
-    "image": "https://placehold.co/600x160/9c27b0/ffffff.png?text=Data+Structures"
+    "image": "https://placehold.co/600x160/9c27b0/ffffff.png?text=Data+Structures",
+    "modules": [
+      { "_id": "m-CS5030-1", "name": "Intro to Algorithms", "course": "CS5030", "lessons": [{ "_id":"l19","name":"Big-O" }, { "_id":"l20","name":"Recursion" }] },
+      { "_id": "m-CS5030-2", "name": "Linear Structures", "course": "CS5030", "lessons": [{ "_id":"l21","name":"Arrays & Lists" }, { "_id":"l22","name":"Stacks & Queues" }] },
+      { "_id": "m-CS5030-3", "name": "Non-linear Structures", "course": "CS5030", "lessons": [{ "_id":"l23","name":"Trees" }, { "_id":"l24","name":"Graphs" }] }
+    ]
   },
   {
     "_id": "CS5040",
     "name": "Machine Learning",
     "description": "Introduction to machine learning concepts and techniques.",
-    "image": "https://placehold.co/600x160/009688/ffffff.png?text=Machine+Learning"
+    "image": "https://placehold.co/600x160/009688/ffffff.png?text=Machine+Learning",
+    "modules": [
+      { "_id": "m-CS5040-1", "name": "ML Foundations", "course": "CS5040", "lessons": [{ "_id":"l25","name":"Linear Regression" }, { "_id":"l26","name":"Logistic Regression" }] },
+      { "_id": "m-CS5040-2", "name": "Model Training", "course": "CS5040", "lessons": [{ "_id":"l27","name":"Gradient Descent" }, { "_id":"l28","name":"Regularization" }] },
+      { "_id": "m-CS5040-3", "name": "Model Evaluation", "course": "CS5040", "lessons": [{ "_id":"l29","name":"Cross-Validation" }, { "_id":"l30","name":"Metrics" }] }
+    ]
   },
   {
     "_id": "CS5050",
     "name": "Database Systems",
     "description": "Design and implementation of database systems.",
-    "image": "https://placehold.co/600x160/e53935/ffffff.png?text=Database+Systems"
+    "image": "https://placehold.co/600x160/e53935/ffffff.png?text=Database+Systems",
+    "modules": [
+      { "_id": "m-CS5050-1", "name": "Relational Databases", "course": "CS5050", "lessons": [{ "_id":"l31","name":"Schema Design" }, { "_id":"l32","name":"SQL Queries" }] },
+      { "_id": "m-CS5050-2", "name": "Transactions & Indexes", "course": "CS5050", "lessons": [{ "_id":"l33","name":"Transactions" }, { "_id":"l34","name":"Indexing" }] },
+      { "_id": "m-CS5050-3", "name": "NoSQL & Scaling", "course": "CS5050", "lessons": [{ "_id":"l35","name":"Key-Value Stores" }, { "_id":"l36","name":"Sharding" }] }
+    ]
   }
 ]

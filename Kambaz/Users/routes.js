@@ -20,6 +20,7 @@ export default function UserRoutes(app) {
     };
     
     const findAllUsers = async (req, res) => {
+    try {
         // Extract query parameters
         const { role, name } = req.query;
         let users;
@@ -36,7 +37,13 @@ export default function UserRoutes(app) {
         }
 
         res.json(users);
-    };
+
+    } catch (error) {
+        console.error("Error fetching all users (GET /api/users):", error);
+        // Respond with a 500 error if the database query fails
+        res.status(500).json({ message: "Internal server error while fetching users." });
+    }
+};
     
     const findUserById = async (req, res) => {
         const { userId } = req.params;
