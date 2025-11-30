@@ -1,4 +1,5 @@
 import model from "./model.js";
+import { v4 as uuidv4 } from "uuid";
 
 export default function AssignmentsDao(db) {
   
@@ -9,7 +10,13 @@ export default function AssignmentsDao(db) {
 
   // C: Create
   function createAssignment(assignment) {
-    return model.create(assignment);
+    // ⚠️ FIX: Generate _id using uuidv4() before creating the document
+    const newAssignment = {
+        _id: uuidv4(), 
+        ...assignment 
+    };
+    
+    return model.create(newAssignment);
   }
 
   // U: Update
